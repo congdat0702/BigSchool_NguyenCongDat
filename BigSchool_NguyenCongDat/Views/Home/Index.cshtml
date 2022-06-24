@@ -3,7 +3,7 @@
     ViewBag.Title = "Home Page";
 }
 
-@*<div class="row">*@
+<div class="row">
     <ul class="course">
         @foreach (var course in Model)
             {
@@ -19,14 +19,52 @@
                     <div class="details">
                         <span class="lecturer">
                             @course.Lecturer.Name
+                            <button class="btn btn-default btn-sm js-toggle-attendance" data-user-id="@course.LecturerId">Follow
+                            </button>
                         </span>
                         <span class="category">
                             @course.Category.Name
                         </span>
+                        <button data-course-id="@course.Id" class="btn btn-default bnt-sm js-toggle-attendance">Going?</button> 
                     </div>
                 </li>
             }
     </ul>
+    </div>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-attendance").click(function (e){
+                var button = $(e.target);
+                $post("/api/attendances", { courseId: button.attr("data-course-id") })
+                    .done(function () {
+                        button
+                            .removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going");
+                    })
+                    .fail(function () {
+                        alert("Something failded!");
+                    });
+            });
+
+
+            $(".js-toggle-attendance").click(function (e) {
+                var button = $(e.target);
+                $post("/api/followings", { followeeId: button.attr("data-course-id") })
+                    .done(function () {
+                        button.text("Following");
+                    })
+                    .fail(function () {
+                        alert("Something failded!");
+                    });
+            });
+
+
+        });
+    </script>
+}
 @*</div>*@
 @*<div class="jumbotron">
     <h1>ASP.NET</h1>
